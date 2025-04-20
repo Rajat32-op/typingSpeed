@@ -1,4 +1,4 @@
-import { useState ,useEffect,useRef} from 'react'
+import { useState ,useEffect,useRef, use} from 'react'
 import './App.css'
 
 function App() {
@@ -6,7 +6,9 @@ function App() {
   const [showbutton,setShowbutton]=useState(true)
   const [status,setStatus]=useState(new Array(sen.length).fill('wait'))
   const [nextSen,setNextSen]=useState("")
-  
+  const [started,setStarted]=useState(false);
+  const [time,setTime]=useState(60)
+
   const scrollRef=useRef(null)
 
   useEffect(()=>{
@@ -14,6 +16,16 @@ function App() {
       scrollRef.current.scrollTop=scrollRef.current.scrollHeight;
     }
   },[sen]);
+
+  useEffect(()=>{
+    if(started){
+      if(time<=0)return;
+      const inter=setInterval(()=>{
+        setTime(time-1);
+      },1000);
+      return ()=> clearInterval(inter);
+    }
+  },[time,started])
 
   const fetchQuote = async () => {
       try {
@@ -51,6 +63,8 @@ function App() {
     setSen("Press start button")
     const newstatus=new Array(18).fill('wait');
     setStatus(newstatus);
+    setStarted(false)
+    setTime(60);
   }
 
   const getNextSen=async()=>{
@@ -63,6 +77,7 @@ function App() {
   }
   const validate=(e)=>{
     const newInp=e.target.value;
+    if(newInp!="")setStarted(true);
     console.log(sen.length,newInp.length);
     if(sen.length<=newInp.length){
       getNextSen()
@@ -92,12 +107,13 @@ function App() {
         })}
       </div>
       <div id='input-box' className='bg-yellow-200 h-[45%] border-4 my-1 flex flex-col justify-center items-center'>
-        {showbutton&&<button className='bg-purple-400 rounded-2xl text-3xl h-14 w-24 text-white' onClick={start}>START</button>}
+        {showbutton&&<button className='bg-green-500 rounded-2xl text-3xl h-14 w-24 font-bold text-white' onClick={start}>START</button>}
         {!showbutton && <p className='text-2xl text-black py-1'>Start typing here</p>}
         {!showbutton && <input type='text' className='bg-yellow-100 w-[80%] h-18 font-bold font-mono text-3xl border-0' onChange={validate} onKeyDown={prevent_ctrl_backspace} autoComplete="off" spellCheck="false" autoCorrect="off"></input>}
       </div>
       <div id='restart_button' className='flex justify-center'>
-        {!showbutton && <button className='bg-purple-400 rounded-2xl text-3xl h-14 w-30 text-white' onClick={restart}>RESTART</button>}
+        {!showbutton && <button className='bg-green-500 font-bold rounded-2xl text-3xl h-14 w-34 text-white' onClick={restart}>RESTART</button>}
+        {!showbutton && <p className='text-3xl text-black px-3'>{`Time remaining ${time}`}</p>}
       </div>
       </div>
     </>
