@@ -7,7 +7,7 @@ function App() {
   const [status,setStatus]=useState(new Array(sen.length).fill('wait'))
   const [nextSen,setNextSen]=useState("")
   const [started,setStarted]=useState(false);
-  const [time,setTime]=useState(6)
+  const [time,setTime]=useState(60)
   const [timeover,setTimeover]=useState(false);
   const [inp,setInp]=useState("");
   const correct=useRef(0);
@@ -116,9 +116,9 @@ function App() {
   
   return (
     <>
-    <div id="body" className='h-screen w-screen px-1 py-1'>
+    <div id="body" className={`h-screen w-screen px-1 py-1 ${timeover?'blur-sm':''}`}>
       <div id="navbar" className='bg-purple-400 h-[12%] w-full flex justify-center items-center'>
-        <p className='text-black font-bold text-5xl '> TYPING SPEED GAME</p>
+        <p className='text-black font-bold text-5xl'> TYPING SPEED GAME</p>
       </div>
       <div id='display-box' ref={scrollRef} className='bg-blue-600 px-2 border-2 overflow-y-scroll flex flex-wrap h-[30%] w-full my-1'>
         {
@@ -127,19 +127,34 @@ function App() {
         })}
       </div>
       <div id='input-box' className='bg-yellow-200 h-[45%] border-4 my-1 flex flex-col justify-center items-center'>
-        {showbutton&&<button className='bg-green-500 rounded-2xl text-3xl h-14 w-24 font-bold text-white' onClick={start}>START</button>}
+        {showbutton&&<button className='bg-green-500 rounded-2xl text-3xl h-14 w-24 font-bold text-white hover:bg-green-400' onClick={start}>START</button>}
         {!showbutton && (<div className='flex w-full'>
           <p className='text-3xl px-5 pb-5'>Time Remaining</p>
           <div className='bg-gray-400 ml-auto rounded-2xl w-[50%] h-5 flex'>
-          <div className='ml-auto transition-all rounded-2xl duration-100 text-3xl h-5 bg-green-600' style={{ width: `${(time / 60) * 100}%` }}></div>
+          <div className='ml-auto transition-all rounded-2xl duration-100 text-3xl h-5 bg-green-600 ' style={{ width: `${(time / 60) * 100}%` }}></div>
         </div>
         </div>)
         }
         {!showbutton && <input type='text' placeholder='Start Typing here' className='bg-yellow-100 w-[80%] h-18 font-bold font-mono text-3xl border-0' disabled={timeover} onChange={validate} onKeyDown={prevent_ctrl_backspace} autoComplete="off" spellCheck="false" autoCorrect="off"></input>}
       </div>
-      <div id='restart_button' className='flex justify-center'>
-        {!showbutton && <button className='bg-green-500 font-bold rounded-2xl text-3xl h-14 w-34 text-white' onClick={restart}>RESTART</button>}
-      </div>
+        </div>
+
+
+      <div id='score_panel' className='w-[70vh]'>
+      <div className={`flex flex-col justify-center items-center fixed top-1/4 left-1/2 transform -translate-x-1/2 -translate-y-1/4 
+  bg-gray-800 text-white p-6 rounded-2xl shadow-lg w-[60%] h-[50vh]
+  transition-all duration-700 ease-out 
+  ${timeover ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-full'}`}>
+  
+  <h2 className="text-2xl font-bold mb-4">Your Score</h2>
+  <p>{`WPM: ${wpm.current}`}</p>
+  <p>{`Accuracy: ${100*correct.current/inp.length}`}</p>
+  <p>Time Taken: 1 min</p>
+
+  <button onClick={restart} className="mt-6 bg-pink-600 px-4 py-2 rounded-md hover:bg-pink-500">
+    Retry
+  </button>
+</div>
       </div>
     </>
   )
