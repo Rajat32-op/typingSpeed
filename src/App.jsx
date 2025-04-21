@@ -123,19 +123,28 @@ function App() {
       <div id='display-box' ref={scrollRef} className='bg-blue-600 px-2 border-2 overflow-y-scroll flex flex-wrap h-[30%] w-full my-1'>
         {
         sen.split('').map((ch,i)=>{
-          return(<span key={`${ch}-${status[i]}-${i}`}style={{display: 'inline-block',animation: status[i] === 'correct' ? 'pop 0.2s ease-out' : 'none',}} className={`text-2xl ${status[i]==='correct'?'text-green-400 ':(status[i]==='wrong'?'text-red-400':'text-white')}`}>{ch === ' ' ? '\u00A0' :ch}</span>);
+          return(<span key={`${ch}-${status[i]}-${i}`}
+            style={{display: 'inline-block',animation: status[i] === 'correct' ? 'pop 0.2s ease-out' : 'none',}} 
+            className={`text-2xl ${status[i]==='correct'?'text-green-400 ':(status[i]==='wrong'?'text-red-400':'text-white')}`}
+            >{ch === ' ' ? '\u00A0' :ch}</span>);
         })}
       </div>
       <div id='input-box' className='bg-yellow-200 h-[45%] border-4 my-1 flex flex-col justify-center items-center'>
-        {showbutton&&<button className='bg-green-500 rounded-2xl text-3xl h-14 w-24 font-bold text-white hover:bg-green-400' onClick={start}>START</button>}
+        {showbutton&&<button className='bg-green-500 rounded-2xl text-3xl h-14 w-24 font-bold text-white hover:bg-green-400' 
+        onClick={start}>START</button>}
         {!showbutton && (<div className='flex w-full'>
           <p className='text-3xl px-5 pb-5'>Time Remaining</p>
           <div className='bg-gray-400 ml-auto rounded-2xl w-[50%] h-5 flex'>
-          <div className='ml-auto transition-all rounded-2xl duration-100 text-3xl h-5 bg-green-600 ' style={{ width: `${(time / 60) * 100}%` }}></div>
+          <div className='ml-auto transition-all rounded-2xl duration-100 text-3xl h-5 bg-green-600 ' 
+          style={{ width: `${(time / 60) * 100}%` }}></div>
         </div>
         </div>)
         }
-        {!showbutton && <input type='text' placeholder='Start Typing here' className='bg-yellow-100 w-[80%] h-18 font-bold font-mono text-3xl border-0' disabled={timeover} onChange={validate} onKeyDown={prevent_ctrl_backspace} autoComplete="off" spellCheck="false" autoCorrect="off"></input>}
+        {!showbutton && <input type='text' placeholder='Start Typing here' 
+        className='bg-yellow-100 w-[80%] h-18 font-bold font-mono text-3xl border-0 fixed bottom-1/6 left-1/2 transform 
+        -translate-x-1/2 ' 
+        disabled={timeover} onChange={validate} onKeyDown={prevent_ctrl_backspace} 
+        autoComplete="off" spellCheck="false" autoCorrect="off"></input>}
       </div>
         </div>
 
