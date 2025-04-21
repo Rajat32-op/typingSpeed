@@ -1,4 +1,4 @@
-import { useState ,useEffect,useRef, use} from 'react'
+import { useState ,useEffect,useRef} from 'react'
 import './App.css'
 
 function App() {
@@ -7,8 +7,12 @@ function App() {
   const [status,setStatus]=useState(new Array(sen.length).fill('wait'))
   const [nextSen,setNextSen]=useState("")
   const [started,setStarted]=useState(false);
-  const [time,setTime]=useState(60)
-
+  const [time,setTime]=useState(6)
+  const [timeover,setTimeover]=useState(false);
+  const [inp,setInp]=useState("");
+  const correct=useRef(0);
+  const wrong=useRef(0);
+  const wpm=useRef(0);
   const scrollRef=useRef(null)
 
   useEffect(()=>{
@@ -19,7 +23,12 @@ function App() {
 
   useEffect(()=>{
     if(started){
-      if(time<=0)return;
+      if(time<0){
+      setTimeover(true);
+      wpm.current=parseInt(correct.current/5);
+     console.log(wpm.current);
+        return;
+      }
       const inter=setInterval(()=>{
         setTime(time-1);
       },1000);
@@ -65,6 +74,7 @@ function App() {
     setStatus(newstatus);
     setStarted(false)
     setTime(60);
+    setTimeover(false);
   }
 
   const getNextSen=async()=>{
@@ -77,21 +87,31 @@ function App() {
   }
   const validate=(e)=>{
     const newInp=e.target.value;
+    setInp(newInp);
     if(newInp!="")setStarted(true);
     console.log(sen.length,newInp.length);
     if(sen.length<=newInp.length){
       getNextSen()
       console.log(sen);
     }
-    else{
+      let newCor=0;
+      let newWrong=0;
       const newstatus=sen.split('').map((ch,i)=>{
         if(i<newInp.length){
-          return ch===newInp[i]?'correct':'wrong';
+          if(ch===newInp[i]){
+            newCor++;
+            return 'correct';
+          }
+          else{
+            newWrong++;
+            return 'wrong';
+          }
         }
         else return 'wait'
       })
+      correct.current=newCor;
+      wrong.current=newWrong;
       setStatus(newstatus);
-    }
   }
   
   return (
@@ -115,7 +135,7 @@ function App() {
         </div>
         </div>)
         }
-        {!showbutton && <input type='text' placeholder='Start Typing here' className='bg-yellow-100 w-[80%] h-18 font-bold font-mono text-3xl border-0' onChange={validate} onKeyDown={prevent_ctrl_backspace} autoComplete="off" spellCheck="false" autoCorrect="off"></input>}
+        {!showbutton && <input type='text' placeholder='Start Typing here' className='bg-yellow-100 w-[80%] h-18 font-bold font-mono text-3xl border-0' disabled={timeover} onChange={validate} onKeyDown={prevent_ctrl_backspace} autoComplete="off" spellCheck="false" autoCorrect="off"></input>}
       </div>
       <div id='restart_button' className='flex justify-center'>
         {!showbutton && <button className='bg-green-500 font-bold rounded-2xl text-3xl h-14 w-34 text-white' onClick={restart}>RESTART</button>}
